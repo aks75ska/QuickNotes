@@ -17,7 +17,7 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false
     },
-    icon: path.join(__dirname, 'assets', 'app-logo.png')
+    icon: path.join(__dirname, 'assets', process.platform === 'darwin' ? 'app-logo.icns' : 'app-logo.png')
   });
 
   // Start the Express server
@@ -138,6 +138,7 @@ app.on('window-all-closed', function () {
 
 app.on('activate', function () {
   if (mainWindow === null) createWindow();
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
 app.on('will-quit', (event) => {
