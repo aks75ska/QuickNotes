@@ -22,7 +22,11 @@
         }
         #charCount { margin-top: 4px; color: rgba(0,0,0,.6); }
         .note-actions { display: flex; justify-content: flex-end; }
-        .mdc-card__content { padding: 16px; }
+        .mdc-card__content { 
+            padding: 16px; 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
         .add-note-section, .search-section {
             background-color: #e0e0e0;
             padding: 16px;
@@ -39,9 +43,18 @@
         #saveNote, #searchButton {
             align-self: flex-start;
         }
+        .note-content {
+            max-height: 200px; /* Updated to 200px */
+            overflow-y: auto;
+            margin-bottom: 8px;
+        }
+        #notesList .mdc-card, #searchResults .mdc-card {
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
+    <!-- The rest of the HTML remains the same -->
     <div class="mdc-layout-grid">
         <div class="mdc-layout-grid__inner">
             <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">

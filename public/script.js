@@ -68,7 +68,7 @@ function fetchNotes(page = 1) {
         notesList.innerHTML = notes.map(note => `
             <div class="mdc-card note">
                 <div class="mdc-card__content">
-                    <p class="mdc-typography--body1">${note.content}</p>
+                    <div class="note-content mdc-typography--body1">${note.content}</div>
                     <p class="mdc-typography--caption">Created: ${new Date(note.created_at).toLocaleString()}</p>
                     <p class="mdc-typography--caption">${note.charCount} characters</p>
                 </div>
@@ -131,7 +131,7 @@ function searchNotes() {
         searchResults.innerHTML = results.map(note => `
             <div class="mdc-card note">
                 <div class="mdc-card__content">
-                    <p class="mdc-typography--body1">${note.content}</p>
+                    <div class="note-content mdc-typography--body1">${note.content}</div>
                     <p class="mdc-typography--caption">Created: ${new Date(note.created_at).toLocaleString()}</p>
                     <p class="mdc-typography--caption">${note.charCount} characters</p>
                 </div>
