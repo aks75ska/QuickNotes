@@ -6,11 +6,15 @@ function updateCharCount() {
     const charCount = content.length;
     const charCountElement = document.getElementById('charCount');
     charCountElement.textContent = `${charCount} / 500 characters`;
-    charCountElement.className = charCount > 500 ? 'char-count error' : 'char-count';
+    charCountElement.className = charCount > 500 || charCount === 0 ? 'char-count error' : 'char-count';
 }
 
 function addNote() {
-    const content = document.getElementById('noteContent').value;
+    const content = document.getElementById('noteContent').value.trim();
+    if (content.length === 0) {
+        showError('Note content cannot be empty.');
+        return;
+    }
     if (content.length > 500) {
         showError('Note content cannot exceed 500 characters.');
         return;
@@ -41,7 +45,9 @@ function addNote() {
 }
 
 function showError(message) {
-    document.getElementById('errorMessage').textContent = message;
+    const errorElement = document.getElementById('errorMessage');
+    errorElement.textContent = message;
+    errorElement.style.display = message ? 'block' : 'none';
 }
 
 function fetchNotes(page = 1) {
