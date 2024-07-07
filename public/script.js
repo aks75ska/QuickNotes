@@ -73,6 +73,10 @@ function fetchNotes(page = 1) {
                     <p class="mdc-typography--caption">${note.charCount} characters</p>
                 </div>
                 <div class="mdc-card__actions">
+                    <button class="mdc-button mdc-card__action mdc-card__action--button" onclick="copyNote('${note.content.replace(/'/g, "\\'")}')">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Copy</span>
+                    </button>
                     <button class="mdc-button mdc-card__action mdc-card__action--button" onclick="deleteNote(${note.$loki})">
                         <div class="mdc-button__ripple"></div>
                         <span class="mdc-button__label">Delete</span>
@@ -135,6 +139,12 @@ function searchNotes() {
                     <p class="mdc-typography--caption">Created: ${new Date(note.created_at).toLocaleString()}</p>
                     <p class="mdc-typography--caption">${note.charCount} characters</p>
                 </div>
+                <div class="mdc-card__actions">
+                    <button class="mdc-button mdc-card__action mdc-card__action--button" onclick="copyNote('${note.content.replace(/'/g, "\\'")}')">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Copy</span>
+                    </button>
+                </div>
             </div>
         `).join('');
     })
@@ -142,6 +152,36 @@ function searchNotes() {
         console.error('Error:', error);
         showError('Failed to search notes. Please try again.');
     });
+}
+
+function copyNote(content) {
+    navigator.clipboard.writeText(content)
+        .then(() => {
+            showMessage('Note copied to clipboard!');
+        })
+        .catch(err => {
+            console.error('Failed to copy note: ', err);
+            showError('Failed to copy note. Please try again.');
+        });
+}
+
+function showMessage(message) {
+    const messageElement = document.createElement('div');
+    messageElement.textContent = message;
+    messageElement.style.position = 'fixed';
+    messageElement.style.bottom = '20px';
+    messageElement.style.left = '50%';
+    messageElement.style.transform = 'translateX(-50%)';
+    messageElement.style.backgroundColor = '#4CAF50';
+    messageElement.style.color = 'white';
+    messageElement.style.padding = '10px';
+    messageElement.style.borderRadius = '5px';
+    messageElement.style.zIndex = '1000';
+    document.body.appendChild(messageElement);
+
+    setTimeout(() => {
+        document.body.removeChild(messageElement);
+    }, 3000);
 }
 
 let noteContentField, searchQueryField;
