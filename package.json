@@ -27,7 +27,8 @@
     "appId": "com.akshay.quicknotes",
     "productName": "Quick Notes",
     "win": {
-      "target": ["nsis", "portable"]
+      "target": ["nsis", "portable"],
+      "icon": "assets/app-logo.png"
     }
   }
 }

@@ -16,7 +16,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
-    }
+    },
+    icon: path.join(__dirname, 'assets', 'app-logo.png')
   });
 
   // Start the Express server
