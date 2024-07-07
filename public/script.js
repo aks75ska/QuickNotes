@@ -68,9 +68,11 @@ function fetchNotes(page = 1) {
         notesList.innerHTML = notes.map(note => `
             <div class="note">
                 <p>${note.content}</p>
-                <small>Created: ${new Date(note.created_at).toLocaleString()}</small>
-                <span class="char-count">(${note.charCount} characters)</span>
-                <span class="delete-btn" data-id="${note.$loki}">Delete</span>
+                <div class="note-meta">
+                    <small>Created: ${new Date(note.created_at).toLocaleString()}</small>
+                    <span class="char-count">(${note.charCount} characters)</span>
+                    <span class="delete-btn" data-id="${note.$loki}">Delete</span>
+                </div>
             </div>
         `).join('');
 
@@ -131,8 +133,10 @@ function searchNotes() {
         searchResults.innerHTML = results.map(note => `
             <div class="note">
                 <p>${note.content}</p>
-                <small>Created: ${new Date(note.created_at).toLocaleString()}</small>
-                <span class="char-count">(${note.charCount} characters)</span>
+                <div class="note-meta">
+                    <small>Created: ${new Date(note.created_at).toLocaleString()}</small>
+                    <span class="char-count">(${note.charCount} characters)</span>
+                </div>
             </div>
         `).join('');
     })
