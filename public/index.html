@@ -27,7 +27,7 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
-        .add-note-section, .search-section {
+        .add-note-section, .search-section, .all-notes-section {
             background-color: #e0e0e0;
             padding: 16px;
             border-radius: 4px;
@@ -94,19 +94,21 @@
 
                 <div id="searchResults"></div>
 
-                <h2 class="mdc-typography--headline6">All Notes</h2>
-                <div id="notesList"></div>
-                <div class="mdc-layout-grid__inner">
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-                        <button id="prevPage" class="mdc-button mdc-button--outlined">
-                            <span class="mdc-button__label">Previous</span>
-                        </button>
-                    </div>
-                    <div id="pageInfo" class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 mdc-typography--body2"></div>
-                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
-                        <button id="nextPage" class="mdc-button mdc-button--outlined">
-                            <span class="mdc-button__label">Next</span>
-                        </button>
+                <div class="all-notes-section">
+                    <h2 class="mdc-typography--headline6">All Notes</h2>
+                    <div id="notesList"></div>
+                    <div class="mdc-layout-grid__inner">
+                        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+                            <button id="prevPage" class="mdc-button mdc-button--outlined">
+                                <span class="mdc-button__label">Previous</span>
+                            </button>
+                        </div>
+                        <div id="pageInfo" class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 mdc-typography--body2"></div>
+                        <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+                            <button id="nextPage" class="mdc-button mdc-button--outlined">
+                                <span class="mdc-button__label">Next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
