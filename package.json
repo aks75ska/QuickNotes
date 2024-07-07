@@ -20,7 +20,8 @@
     "express": "^4.17.1",
     "body-parser": "^1.19.0",
     "lokijs": "^1.5.12",
-    "fuse.js": "^6.4.6"
+    "fuse.js": "^6.4.6",
+    "material-components-web": "^14.0.0"
   },
   "build": {
     "appId": "com.akshay.quicknotes",

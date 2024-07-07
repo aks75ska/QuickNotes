@@ -3,89 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' http://localhost:3000; style-src 'self' 'unsafe-inline'; script-src 'self';">
     <title>Notes App</title>
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
         body { 
-            font-family: Arial, sans-serif; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 20px; 
+            font-family: Roboto, sans-serif; 
+            margin: 0; 
+            padding: 20px;
+            background-color: #f5f5f5;
         }
-        textarea { 
-            width: 100%; 
-            height: 100px; 
+        .mdc-layout-grid { max-width: 800px; margin: 0 auto; }
+        .note { margin-bottom: 16px; }
+        .mdc-text-field { width: 100%; }
+        .mdc-text-field--textarea .mdc-text-field__input {
+            height: 150px;
         }
-        button { 
-            margin-top: 10px; 
+        #charCount { margin-top: 4px; color: rgba(0,0,0,.6); }
+        .note-actions { display: flex; justify-content: flex-end; }
+        .mdc-card__content { padding: 16px; }
+        .add-note-section, .search-section {
+            background-color: #e0e0e0;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
         }
-        #notesList, #searchResults { 
-            margin-top: 20px; 
+        .search-section {
+            display: flex;
+            flex-direction: column;
         }
-        .note { 
-            border: 1px solid #ddd; 
-            padding: 10px; 
-            margin-bottom: 10px; 
-            background-color: #f9f9f9;
-            border-radius: 5px;
+        .search-section .mdc-text-field {
+            margin-bottom: 16px;
         }
-        .note p {
-            margin: 0;
-            max-height: 100px;
-            overflow-y: auto;
-            word-wrap: break-word;
-        }
-        .delete-btn { 
-            margin-left: 10px; 
-            color: red; 
-            cursor: pointer; 
-        }
-        .pagination { 
-            display: flex; 
-            justify-content: center; 
-            margin-top: 20px; 
-        }
-        .pagination button { 
-            margin: 0 5px; 
-        }
-        .char-count { 
-            color: #666; 
-            font-style: italic; 
-        }
-        #errorMessage { 
-            color: red; 
-            margin-top: 10px; 
-        }
-        .note-meta {
-            margin-top: 5px;
-            font-size: 0.9em;
-            color: #666;
+        #saveNote, #searchButton {
+            align-self: flex-start;
         }
     </style>
 </head>
 <body>
-    <h1>Notes App</h1>
-    
-    <h2>Add a Note</h2>
-    <textarea id="noteContent" maxlength="500"></textarea>
-    <div id="charCount" class="char-count">0 / 500 characters</div>
-    <button id="saveNote">Save Note</button>
-    <div id="errorMessage"></div>
+    <div class="mdc-layout-grid">
+        <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+                <h1 class="mdc-typography--headline4">Notes App</h1>
+                
+                <div class="add-note-section">
+                    <h2 class="mdc-typography--headline6">Add a Note</h2>
+                    <label class="mdc-text-field mdc-text-field--textarea mdc-text-field--filled">
+                        <span class="mdc-text-field__ripple"></span>
+                        <span class="mdc-floating-label" id="note-content-label">Note content</span>
+                        <span class="mdc-text-field__resizer">
+                            <textarea id="noteContent" class="mdc-text-field__input" rows="5" maxlength="500" aria-labelledby="note-content-label"></textarea>
+                        </span>
+                        <span class="mdc-line-ripple"></span>
+                    </label>
+                    <div id="charCount" class="mdc-typography--caption">0 / 500 characters</div>
+                    <button id="saveNote" class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label">Save Note</span>
+                    </button>
+                    <div id="errorMessage" class="mdc-typography--body2" style="color: #b00020;"></div>
+                </div>
 
-    <h2>Search Notes</h2>
-    <input type="text" id="searchQuery" placeholder="Enter search query">
-    <button id="searchButton">Search</button>
+                <div class="search-section">
+                    <h2 class="mdc-typography--headline6">Search Notes</h2>
+                    <label class="mdc-text-field mdc-text-field--outlined">
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label" id="search-query-label">Search query</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                        <input type="text" id="searchQuery" class="mdc-text-field__input" aria-labelledby="search-query-label">
+                    </label>
+                    <button id="searchButton" class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label">Search</span>
+                    </button>
+                </div>
 
-    <div id="searchResults"></div>
+                <div id="searchResults"></div>
 
-    <h2>All Notes</h2>
-    <div id="notesList"></div>
-    <div class="pagination">
-        <button id="prevPage">Previous</button>
-        <span id="pageInfo"></span>
-        <button id="nextPage">Next</button>
+                <h2 class="mdc-typography--headline6">All Notes</h2>
+                <div id="notesList"></div>
+                <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+                        <button id="prevPage" class="mdc-button mdc-button--outlined">
+                            <span class="mdc-button__label">Previous</span>
+                        </button>
+                    </div>
+                    <div id="pageInfo" class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4 mdc-typography--body2"></div>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+                        <button id="nextPage" class="mdc-button mdc-button--outlined">
+                            <span class="mdc-button__label">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>

@@ -6,7 +6,6 @@ function updateCharCount() {
     const charCount = content.length;
     const charCountElement = document.getElementById('charCount');
     charCountElement.textContent = `${charCount} / 500 characters`;
-    charCountElement.className = charCount > 500 || charCount === 0 ? 'char-count error' : 'char-count';
 }
 
 function addNote() {
@@ -34,6 +33,7 @@ function addNote() {
     .then(data => {
         console.log('Note saved:', data);
         document.getElementById('noteContent').value = '';
+        noteContentField.foundation.activateFocus(); // Reset the floating label
         updateCharCount();
         fetchNotes(1);
         showError('');
@@ -66,24 +66,22 @@ function fetchNotes(page = 1) {
         totalPages = fetchedTotalPages;
         const notesList = document.getElementById('notesList');
         notesList.innerHTML = notes.map(note => `
-            <div class="note">
-                <p>${note.content}</p>
-                <div class="note-meta">
-                    <small>Created: ${new Date(note.created_at).toLocaleString()}</small>
-                    <span class="char-count">(${note.charCount} characters)</span>
-                    <span class="delete-btn" data-id="${note.$loki}">Delete</span>
+            <div class="mdc-card note">
+                <div class="mdc-card__content">
+                    <p class="mdc-typography--body1">${note.content}</p>
+                    <p class="mdc-typography--caption">Created: ${new Date(note.created_at).toLocaleString()}</p>
+                    <p class="mdc-typography--caption">${note.charCount} characters</p>
+                </div>
+                <div class="mdc-card__actions">
+                    <button class="mdc-button mdc-card__action mdc-card__action--button" onclick="deleteNote(${note.$loki})">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Delete</span>
+                    </button>
                 </div>
             </div>
         `).join('');
 
         document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages} (Total notes: ${totalNotes})`;
-
-        // Add event listeners to delete buttons
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                deleteNote(this.getAttribute('data-id'));
-            });
-        });
     })
     .catch(error => {
         console.error('Error fetching notes:', error);
@@ -131,11 +129,11 @@ function searchNotes() {
     .then(results => {
         const searchResults = document.getElementById('searchResults');
         searchResults.innerHTML = results.map(note => `
-            <div class="note">
-                <p>${note.content}</p>
-                <div class="note-meta">
-                    <small>Created: ${new Date(note.created_at).toLocaleString()}</small>
-                    <span class="char-count">(${note.charCount} characters)</span>
+            <div class="mdc-card note">
+                <div class="mdc-card__content">
+                    <p class="mdc-typography--body1">${note.content}</p>
+                    <p class="mdc-typography--caption">Created: ${new Date(note.created_at).toLocaleString()}</p>
+                    <p class="mdc-typography--caption">${note.charCount} characters</p>
                 </div>
             </div>
         `).join('');
@@ -146,19 +144,30 @@ function searchNotes() {
     });
 }
 
-// Add event listeners when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', (event) => {
+let noteContentField, searchQueryField;
+
+// Initialize Material Components
+document.addEventListener('DOMContentLoaded', function() {
+    mdc.autoInit();
+    
+    noteContentField = new mdc.textField.MDCTextField(document.querySelector('.mdc-text-field--textarea'));
+    searchQueryField = new mdc.textField.MDCTextField(document.querySelector('.mdc-text-field--outlined'));
+    const saveNoteButton = new mdc.ripple.MDCRipple(document.querySelector('#saveNote'));
+    const searchButton = new mdc.ripple.MDCRipple(document.querySelector('#searchButton'));
+    const prevPageButton = new mdc.ripple.MDCRipple(document.querySelector('#prevPage'));
+    const nextPageButton = new mdc.ripple.MDCRipple(document.querySelector('#nextPage'));
+
     document.getElementById('noteContent').addEventListener('input', updateCharCount);
-    document.getElementById('saveNote').addEventListener('click', addNote);
-    document.getElementById('searchButton').addEventListener('click', searchNotes);
-    document.getElementById('prevPage').addEventListener('click', () => changePage(-1));
-    document.getElementById('nextPage').addEventListener('click', () => changePage(1));
+    saveNoteButton.listen('click', addNote);
+    searchButton.listen('click', searchNotes);
+    prevPageButton.listen('click', () => changePage(-1));
+    nextPageButton.listen('click', () => changePage(1));
     document.getElementById('searchQuery').addEventListener('keypress', function(event) {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault();
             searchNotes();
         }
     });
 
-    fetchNotes(); // Load first page of notes on page load
+    fetchNotes();
 });
