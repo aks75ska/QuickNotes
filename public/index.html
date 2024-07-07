@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' http://localhost:3000; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+    <title>Quick Notes</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        textarea { width: 100%; height: 100px; }
+        button { margin-top: 10px; }
+        #notesList, #searchResults { margin-top: 20px; }
+        .note { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+        .delete-btn { margin-left: 10px; color: red; cursor: pointer; }
+        .pagination { display: flex; justify-content: center; margin-top: 20px; }
+        .pagination button { margin: 0 5px; }
+        .char-count { color: #666; font-style: italic; }
+        #errorMessage { color: red; margin-top: 10px; }
+        #debugInfo { background-color: #f0f0f0; padding: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+   
+    <h2>Add a Note</h2>
+    <textarea id="noteContent" maxlength="500" oninput="updateCharCount()"></textarea>
+    <div id="charCount" class="char-count">0 / 500 characters</div>
+    <button onclick="addNote()">Save Note</button>
+    <div id="errorMessage"></div>
+
+    <h2>Search Notes</h2>
+    <input type="text" id="searchQuery" placeholder="Enter search query">
+    <button onclick="searchNotes()">Search</button>
+
+    <div id="searchResults"></div>
+
+    <h2>All Notes</h2>
+    <div id="notesList"></div>
+    <div class="pagination">
+        <button id="prevPage">Previous</button>
+        <span id="pageInfo"></span>
+        <button id="nextPage">Next</button>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        let notesData = [];
+
+        function updateCharCount() {
+            const content = document.getElementById('noteContent').value;
+            const charCount = content.length;
+            const charCountElement = document.getElementById('charCount');
+            charCountElement.textContent = `${charCount} / 500 characters`;
+            charCountElement.className = charCount > 500 ? 'char-count error' : 'char-count';
+        }
+
+        function addNote() {
+            const content = document.getElementById('noteContent').value;
+            if (content.length > 500) {
+                showError('Note content cannot exceed 500 characters.');
+                return;
+            }
+            fetch('http://localhost:3000/api/notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('noteContent').value = '';
+                updateCharCount();
+                fetchNotes(1);
+                showError('');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Failed to save note. Please try again.');
+            });
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function fetchNotes(page = 1) {
+            fetch(`http://localhost:3000/api/notes?page=${page}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const { notes, currentPage: fetchedPage, totalPages: fetchedTotalPages, totalNotes } = data;
+                notesData = notes;
+                currentPage = fetchedPage;
+                totalPages = fetchedTotalPages;
+                renderNotes();
+                updatePagination(totalNotes);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Failed to fetch notes. Please try again.');
+            });
+        }
+
+        function renderNotes() {
+            const notesList = document.getElementById('notesList');
+            notesList.innerHTML = notesData.map(note => `
+                <div class="note" id="note-${note.$loki}">
+                    <p>${note.content}</p>
+                    <small>Created: ${new Date(note.created_at).toLocaleString()}</small>
+                    <span class="char-count">(${note.charCount} characters)</span>
+                    <span class="delete-btn" data-id="${note.$loki}">Delete</span>
+                </div>
+            `).join('');
+        }
+
+        function updatePagination(totalNotes) {
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages} (Total notes: ${totalNotes})`;
+            document.getElementById('prevPage').disabled = currentPage <= 1;
+            document.getElementById('nextPage').disabled = currentPage >= totalPages;
+        }
+
+        function deleteNote(id) {
+            fetch(`http://localhost:3000/api/notes/${id}`, { method: 'DELETE' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    notesData = notesData.filter(note => note.$loki !== id);
+                    renderNotes();
+                    fetchNotes(currentPage);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    debug('Error deleting note: ' + error.message);
+                    showError('Failed to delete note. Please try again.');
+                });
+        }
+
+        function searchNotes() {
+            const query = document.getElementById('searchQuery').value;
+            fetch('http://localhost:3000/api/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(results => {
+                const searchResults = document.getElementById('searchResults');
+                searchResults.innerHTML = results.map(note => `
+                    <div class="note">
+                        <p>${note.content}</p>
+                        <small>Created: ${new Date(note.created_at).toLocaleString()}</small>
+                        <span class="char-count">(${note.charCount} characters)</span>
+                    </div>
+                `).join('');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Failed to search notes. Please try again.');
+            });
+        }
+
+        // Event Listeners
+        document.getElementById('searchQuery').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchNotes();
+            }
+        });
+
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                fetchNotes(currentPage - 1);
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                fetchNotes(currentPage + 1);
+            }
+        });
+
+        document.getElementById('notesList').addEventListener('click', function(event) {
+            if (event.target.classList.contains('delete-btn')) {
+                const id = parseInt(event.target.getAttribute('data-id'));
+                deleteNote(id);
+            }
+        });
+
+        // Initial load
+        fetchNotes();
+
+    </script>
+</body>
+</html>

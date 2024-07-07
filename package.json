@@ -1,0 +1,32 @@
+{
+  "name": "quick-notes",
+  "version": "1.0.0",
+  "description": "A simple and fast notes application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^25.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "lokijs": "^1.5.12",
+    "fuse.js": "^6.4.6"
+  },
+  "build": {
+    "appId": "com.akshay.quicknotes",
+    "productName": "Quick Notes",
+    "win": {
+      "target": ["nsis", "portable"]
+    }
+  }
+}
