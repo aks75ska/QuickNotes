@@ -1,6 +1,6 @@
-# Notes App
+# Quick Notes
 
-Notes App is a simple, cross-platform desktop application for creating, storing, and searching notes. Built with Electron and Node.js, it provides a clean, intuitive interface for managing your thoughts and ideas.
+Quick Notes is a simple, cross-platform desktop application for creating, storing, and searching notes. Built with Electron and Node.js, it provides a clean, intuitive interface for managing your thoughts and ideas.
 
 ## Features
 
@@ -18,9 +18,9 @@ Before you begin, ensure you have met the following requirements:
 - You have installed Node.js (version 12.0 or later)
 - You have a Windows/Linux/Mac machine
 
-## Installing Notes App
+## Installing Quick Notes
 
-To install Notes App, follow these steps:
+To install Quick Notes, follow these steps:
 
 1. Clone the repository
    ```
@@ -35,9 +35,9 @@ To install Notes App, follow these steps:
    npm install
    ```
 
-## Using Notes App
+## Using Quick Notes
 
-To use Notes App, follow these steps:
+To use Quick Notes, follow these steps:
 
 1. Start the application
    ```
@@ -48,9 +48,9 @@ To use Notes App, follow these steps:
 4. To delete a note, click the "Delete" button next to the note
 5. To copy a note's content, click the "Copy" button next to the note
 
-## Building Notes App
+## Building Quick Notes
 
-To build Notes App for your platform, use one of the following commands:
+To build Quick Notes for your platform, use one of the following commands:
 
 - For Windows:
   ```
@@ -65,9 +65,9 @@ To build Notes App for your platform, use one of the following commands:
   npm run dist:linux
   ```
 
-## Contributing to Notes App
+## Contributing to Quick Notes
 
-To contribute to Notes App, follow these steps:
+To contribute to Quick Notes, follow these steps:
 
 1. Fork this repository
 2. Create a branch: `git checkout -b <branch_name>`
