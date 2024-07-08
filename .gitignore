@@ -131,3 +131,6 @@ dist
 
 # vs
 .vs/
+
+# Idea
+.idea/
